@@ -2,6 +2,19 @@
   "expo": {
     "name": "IFPlan",
     "slug": "IFPlan",
-    "version": "1.0.0"
-  }
+    "version": "1.0.0",
+    "android": {
+      "package": "com.lapis.IFPlan",
+      "edgeToEdgeEnabled": true,
+      "adaptativeIcon": {
+        "foregroundImage": "./src/assets/adaptive-icon.png",
+        "backgroundColor": "#3d44cd"
+      }
+    },
+    "ios": {
+      "bundleIdentifier": "com.lapis.IFPlan",
+      "icon": "./src/assets/ios-icon.png"
+    }
+  },
+  "plugins": ["expo-router", "expo-asset"]
 }

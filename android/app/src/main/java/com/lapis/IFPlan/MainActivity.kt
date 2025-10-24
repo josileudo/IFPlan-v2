@@ -1,4 +1,4 @@
-package com.ifplan
+package com.lapis.IFPlan
 
 import android.os.Build
 import android.os.Bundle
