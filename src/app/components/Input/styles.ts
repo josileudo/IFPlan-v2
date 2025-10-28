@@ -7,16 +7,16 @@ export const styles = StyleSheet.create({
     gap: 10,
   },
   label: {
-    color: colors.gray[500],
+    color: colors.primary,
     fontFamily: fontFamily.medium,
     fontSize: 12,
   },
   input: {
-    color: colors.black,
+    color: colors.textSecondary,
     fontFamily: fontFamily.regular,
     fontSize: 16,
     paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: colors.gray[400],
+    borderBottomColor: colors.border,
   },
 });
