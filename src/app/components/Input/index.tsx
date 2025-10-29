@@ -12,7 +12,7 @@ export const Input = ({ label, ...rest }: Props) => {
       <Text style={styles.label}>{label}</Text>
       <TextInput
         style={styles.input}
-        placeholderTextColor={colors.gray[400]}
+        placeholderTextColor={colors.textPrimary}
         {...rest}
       />
     </View>

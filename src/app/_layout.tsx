@@ -1,4 +1,3 @@
-// Podemos ter um arquivo desses por pasta
 import Loading from "@/app/components/Loading";
 import { colors } from "@/theme/colors";
 import {
@@ -17,14 +16,14 @@ export default function Layout() {
   });
 
   if (!fontsLoaded) {
-      return <Loading />
+    return <Loading />;
   }
 
   return (
     <Stack
       screenOptions={{
         headerShown: false,
-        contentStyle: { backgroundColor: colors.white },
+        contentStyle: { backgroundColor: colors.background },
       }}
     />
   );

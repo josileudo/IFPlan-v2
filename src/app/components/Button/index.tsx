@@ -22,7 +22,7 @@ export const Button = ({ title, isProcessing = false, ...rest }: Props) => {
     >
       <Text style={styles.text}>
         {isProcessing ? (
-          <ActivityIndicator size="small" color={colors.white} />
+          <ActivityIndicator size="small" color={colors.textPrimary} />
         ) : (
           title
         )}
