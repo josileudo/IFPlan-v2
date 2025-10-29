@@ -1,3 +1,4 @@
+import { ButtonIcon } from "@/app/components/ButtonIcon";
 import { Separator } from "@/app/components/Separator";
 import { colors } from "@/theme";
 import { JSX } from "react";
@@ -14,6 +15,7 @@ import { styles } from "./styles";
 type Props<T> = FlatListProps<T> & {
   title: string;
   emptyMessage?: string;
+  showButton?: boolean;
   containerStyle?: StyleProp<ViewStyle>;
 };
 
@@ -22,12 +24,16 @@ export const List: <T>(props: Props<T>) => JSX.Element = ({
   emptyMessage,
   containerStyle,
   data,
+  showButton = false,
   renderItem,
   ...rest
 }) => {
   return (
     <View style={[styles.container, containerStyle]}>
-      <Text style={styles.title}>{title}</Text>
+      <View style={styles.header}>
+        <Text style={styles.title}>{title}</Text>
+        {showButton && <ButtonIcon icon="add" onPress={() => {}} />}
+      </View>
 
       <FlatList
         data={data}

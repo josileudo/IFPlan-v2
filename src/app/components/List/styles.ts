@@ -10,6 +10,12 @@ export const styles = StyleSheet.create({
     paddingTop: 16,
     paddingBottom: 72,
   },
+  header: {
+    width: "100%",
+    justifyContent: "space-between",
+    flexDirection: "row",
+    alignItems: "center",
+  },
   title: {
     marginTop: 24,
     paddingBottom: 16,
