@@ -1,5 +1,6 @@
 import { Card, SimulationDataProps } from "@/app/components/Card";
 import { List } from "@/app/components/List";
+import { useRouter } from "expo-router";
 import { SafeAreaView, Text, View } from "react-native";
 
 const data = [
@@ -22,6 +23,7 @@ const data = [
 ] as SimulationDataProps[];
 
 export default function Dashboard() {
+  const router = useRouter();
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={{ flex: 1, paddingHorizontal: 12 }}>
@@ -29,6 +31,7 @@ export default function Dashboard() {
           data={data}
           renderItem={({ item }) => <Card data={item} />}
           showButton
+          buttonPress={() => router.navigate("simulation")}
           title={"Listagem de simulação"}
         />
       </View>

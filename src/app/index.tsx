@@ -1,15 +1,8 @@
 import { colors } from "@/theme";
 import { LinearGradient } from "expo-linear-gradient";
-import {
-  ImageBackground,
-  SafeAreaView,
-  StatusBar,
-  Text,
-  View,
-} from "react-native";
+import { ImageBackground, StatusBar } from "react-native";
 import { router } from "expo-router";
 import { HomeScreen } from "./screens/Home";
-import { Button } from "./components/Button";
 
 export default function Index() {
   const { navigate } = router;
