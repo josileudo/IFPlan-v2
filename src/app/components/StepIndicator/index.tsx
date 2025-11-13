@@ -10,9 +10,10 @@ type Step = {
 type Props = {
   title: string;
   steps: Step[];
+  showButtons?: boolean;
 };
 
-export const StepIndicator = ({ title, steps }: Props) => {
+export const StepIndicator = ({ title, steps, showButtons = false }: Props) => {
   const [step, setStep] = useState(1);
   const totalSteps = steps?.length ?? 0;
 
@@ -52,31 +53,33 @@ export const StepIndicator = ({ title, steps }: Props) => {
 
       <View style={styles.contentContainer}>{steps[step - 1].children}</View>
 
-      <View style={styles.buttonContainer}>
-        {step > 1 && (
-          <TouchableOpacity
-            onPress={handlePrevious}
-            style={[styles.button, styles.backButton]}
-          >
-            <Text style={styles.backButtonText}>Anterior</Text>
-          </TouchableOpacity>
-        )}
-        {step < totalSteps ? (
-          <TouchableOpacity
-            onPress={handleNext}
-            style={[styles.button, styles.nextButton]}
-          >
-            <Text style={styles.nextButtonText}>Próximo</Text>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            onPress={() => alert("Salvar")}
-            style={[styles.button, styles.nextButton]}
-          >
-            <Text style={styles.nextButtonText}>Salvar</Text>
-          </TouchableOpacity>
-        )}
-      </View>
+      {showButtons && (
+        <View style={styles.buttonContainer}>
+          {step > 1 && (
+            <TouchableOpacity
+              onPress={handlePrevious}
+              style={[styles.button, styles.backButton]}
+            >
+              <Text style={styles.backButtonText}>Anterior</Text>
+            </TouchableOpacity>
+          )}
+          {step < totalSteps ? (
+            <TouchableOpacity
+              onPress={handleNext}
+              style={[styles.button, styles.nextButton]}
+            >
+              <Text style={styles.nextButtonText}>Próximo</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              onPress={() => alert("Salvar")}
+              style={[styles.button, styles.nextButton]}
+            >
+              <Text style={styles.nextButtonText}>Salvar</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
     </View>
   );
 };

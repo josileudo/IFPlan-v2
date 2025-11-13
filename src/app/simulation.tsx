@@ -28,7 +28,11 @@ export default function Simulation() {
         flex: 1,
       }}
     >
-      <StepIndicator title={"Criação de uma nova simulação"} steps={steps} />
+      <StepIndicator
+        title={"Criação de uma nova simulação"}
+        steps={steps}
+        showButtons
+      />
     </SafeAreaView>
   );
 }
