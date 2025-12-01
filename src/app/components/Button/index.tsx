@@ -10,17 +10,30 @@ import {
 type Props = TouchableOpacityProps & {
   title: string;
   isProcessing?: boolean;
+  type?: "primary" | "secondary";
 };
 
-export const Button = ({ title, isProcessing = false, ...rest }: Props) => {
+export const Button = ({
+  title,
+  isProcessing = false,
+  type = "primary",
+  ...rest
+}: Props) => {
+  const isDisabled = () => isProcessing || rest.disabled;
+
   return (
     <TouchableOpacity
-      style={styles.container}
-      activeOpacity={0.8}
-      disabled={isProcessing}
       {...rest}
+      style={[
+        styles.container,
+        isDisabled() && styles.disabled,
+        rest.style,
+        type === "secondary" && styles.secondary,
+      ]}
+      activeOpacity={0.8}
+      disabled={isDisabled()}
     >
-      <Text style={styles.text}>
+      <Text style={[styles.text, type === "secondary" && styles.textSecondary]}>
         {isProcessing ? (
           <ActivityIndicator size="small" color={colors.textPrimary} />
         ) : (

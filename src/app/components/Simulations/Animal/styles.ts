@@ -21,4 +21,16 @@ export const styles = StyleSheet.create({
     justifyContent: "flex-end",
     marginBottom: 16,
   },
+  textInput: {
+    width: "auto",
+    flexGrow: 1,
+    flexShrink: 1,
+    height: 45,
+    borderWidth: 1,
+    borderRadius: 8,
+    borderColor: "#d8d8d8",
+    backgroundColor: "#fff",
+    padding: 8,
+    marginBottom: 8,
+  },
 });

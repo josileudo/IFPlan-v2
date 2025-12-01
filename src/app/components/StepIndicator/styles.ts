@@ -5,7 +5,6 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
-    paddingHorizontal: 12,
   },
   header: {
     width: "100%",
@@ -51,7 +50,6 @@ export const styles = StyleSheet.create({
     width: 20,
     height: 2,
     backgroundColor: colors.border,
-    marginHorizontal: 10,
   },
   activeLine: {
     backgroundColor: colors.primary,
@@ -86,5 +84,8 @@ export const styles = StyleSheet.create({
   nextButtonText: {
     color: colors.background,
     fontFamily: fontFamily.bold,
+  },
+  buttonDisabled: {
+    opacity: 0.5,
   },
 });

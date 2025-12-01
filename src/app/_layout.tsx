@@ -7,8 +7,10 @@ import {
   Inter_400Regular,
 } from "@expo-google-fonts/inter";
 import { Stack } from "expo-router";
+import { MMKVLoader } from "react-native-mmkv-storage";
 
 export default function Layout() {
+  const storage = new MMKVLoader().initialize();
   const [fontsLoaded] = useFonts({
     Inter_700Bold,
     Inter_500Medium,

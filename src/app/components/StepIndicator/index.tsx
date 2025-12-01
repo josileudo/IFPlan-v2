@@ -8,21 +8,51 @@ type Step = {
 };
 
 type Props = {
-  title: string;
+  title?: string;
   steps: Step[];
+  automaticNavigation?: boolean;
   showButtons?: boolean;
+  currentStep?: number;
+  prevDisabled?: boolean;
+  nextDisabled?: boolean;
+  onNext?: () => void;
+  onPrev?: () => void;
+  onFinish?: () => void;
 };
 
-export const StepIndicator = ({ title, steps, showButtons = false }: Props) => {
-  const [step, setStep] = useState(1);
+export const StepIndicator = ({
+  title,
+  steps,
+  onNext,
+  onPrev,
+  onFinish,
+  showButtons = false,
+  currentStep = 1,
+  prevDisabled = false,
+  nextDisabled = false,
+  automaticNavigation = false,
+}: Props) => {
+  const [step, setStep] = useState(currentStep);
   const totalSteps = steps?.length ?? 0;
 
+  React.useEffect(() => {
+    setStep(currentStep);
+  }, [currentStep]);
+
   const handleNext = () => {
-    setStep((prevStep) => Math.min(prevStep + 1, totalSteps));
+    if (automaticNavigation) {
+      setStep((prevStep) => Math.min(prevStep + 1, totalSteps));
+    } else {
+      onNext?.();
+    }
   };
 
   const handlePrevious = () => {
-    setStep((prevStep) => Math.max(prevStep - 1, 1));
+    if (automaticNavigation) {
+      setStep((prevStep) => Math.max(prevStep - 1, 1));
+    } else {
+      onPrev?.();
+    }
   };
 
   const renderStepIndicator = () => {
@@ -38,7 +68,7 @@ export const StepIndicator = ({ title, steps, showButtons = false }: Props) => {
           {i < totalSteps && (
             <View style={[styles.line, i < step && styles.activeLine]} />
           )}
-        </View>,
+        </View>
       );
     }
     return <View style={styles.indicatorContainer}>{indicators}</View>;
@@ -58,7 +88,13 @@ export const StepIndicator = ({ title, steps, showButtons = false }: Props) => {
           {step > 1 && (
             <TouchableOpacity
               onPress={handlePrevious}
-              style={[styles.button, styles.backButton]}
+              style={[
+                styles.button,
+                styles.backButton,
+                prevDisabled && styles.buttonDisabled,
+              ]}
+              disabled={prevDisabled}
+              activeOpacity={0.8}
             >
               <Text style={styles.backButtonText}>Anterior</Text>
             </TouchableOpacity>
@@ -66,13 +102,19 @@ export const StepIndicator = ({ title, steps, showButtons = false }: Props) => {
           {step < totalSteps ? (
             <TouchableOpacity
               onPress={handleNext}
-              style={[styles.button, styles.nextButton]}
+              style={[
+                styles.button,
+                styles.nextButton,
+                nextDisabled && styles.buttonDisabled,
+              ]}
+              disabled={nextDisabled}
+              activeOpacity={0.8}
             >
               <Text style={styles.nextButtonText}>Próximo</Text>
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
-              onPress={() => alert("Salvar")}
+              onPress={onFinish}
               style={[styles.button, styles.nextButton]}
             >
               <Text style={styles.nextButtonText}>Salvar</Text>

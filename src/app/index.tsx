@@ -5,7 +5,6 @@ import { router } from "expo-router";
 import { HomeScreen } from "./screens/Home";
 
 export default function Index() {
-  const { navigate } = router;
   const image = require("../assets/background.png");
   return (
     <ImageBackground

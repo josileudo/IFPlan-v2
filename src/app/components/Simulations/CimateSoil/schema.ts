@@ -50,10 +50,7 @@ export const climateSoilSchema = z.object({
   precipitation: z.number({ message: fieldObligation }).min(0, alertMessage),
   maxTemperature: z.number({ message: fieldObligation }).min(0, alertMessage),
   minTemperature: z.number({ message: fieldObligation }).min(0, alertMessage),
-  relativeHumidity: z
-    .number({ message: fieldObligation })
-    .min(0)
-    .max(100, alertMessage),
+  relativeHumidity: z.number({ message: fieldObligation }).min(0),
   windSpeed: z.number({ message: fieldObligation }).min(0, alertMessage),
   dose: z.number({ message: fieldObligation }).min(0, alertMessage),
   irrigationAvailableWater: z

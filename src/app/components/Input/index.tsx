@@ -22,7 +22,7 @@ export const Input = forwardRef(
             placeholderTextColor={colors.border}
             mask={mask}
             onChangeText={(text, rawText) => {
-              onChangeText(rawText);
+              onChangeText?.(rawText);
             }}
             {...rest}
           />
@@ -31,6 +31,7 @@ export const Input = forwardRef(
             ref={ref}
             style={styles.input}
             placeholderTextColor={colors.border}
+            onChangeText={onChangeText}
             {...rest}
           />
         )}
