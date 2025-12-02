@@ -179,6 +179,7 @@ export const useFormStore = create<FormState>((set, get) => ({
       if (sim.id === id) {
         return {
           ...sim,
+          date: new Date().toISOString(),
           data: result,
         };
       }

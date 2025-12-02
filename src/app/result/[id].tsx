@@ -56,6 +56,7 @@ export default function Result() {
     sliderMsValue,
     sliderPrecoValue,
   });
+  const [lastResult, setLastResult] = useState(resultSimulation());
 
   const hasChangedAnySlider = useMemo(() => {
     return (
@@ -72,6 +73,10 @@ export default function Result() {
     sliderMsValue,
     sliderPrecoValue,
   ]);
+
+  const colorAfterChanged = (item: keyof typeof result) => {
+    return lastResult[item] !== result[item] ? "green" : "black";
+  };
 
   const handleSave = () => {
     if (params.id && params.id !== "unsaved") updateSimulation(params.id);
@@ -92,27 +97,38 @@ export default function Result() {
 
   useEffect(() => {
     if (params.id) loadSimulation(params.id);
+    setLastResult(resultSimulation());
   }, []);
+
+  // TODO: Criar um Array de objetos para renderizar os resultados
+  // TODO: Trocar o scrollview por uma FlatList
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header
-        title="Resultados"
-        onNavigate={() => router.navigate("/dashboard")}
-      />
+      <Header title="Resultados" onNavigate={() => router.back()} />
       <View style={styles.wrapper}>
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
           <View style={styles.card}>
             <Text style={styles.title}>Solo-Água-Planta-Animal</Text>
             <View style={styles.item}>
               <Text>Tensão da água no solo (bar)</Text>
-              <MaskedText mask="999999.99">
+              <MaskedText
+                mask="999999.99"
+                style={{
+                  color: colorAfterChanged("tenAguaSolo"),
+                }}
+              >
                 {result?.tenAguaSolo.toString()}
               </MaskedText>
             </View>
             <View style={styles.item}>
               <Text>Produção de forragem (kg MV/m2)</Text>
-              <MaskedText mask="999999.99">
+              <MaskedText
+                mask="999999.99"
+                style={{
+                  color: colorAfterChanged("prodForragem"),
+                }}
+              >
                 {result?.prodForragem.toString()}
               </MaskedText>
             </View>
@@ -124,21 +140,37 @@ export default function Result() {
             </View>
             <View style={styles.item}>
               <Text>Taxa de lotação (vacas/ha)</Text>
-              <MaskedText mask="999999.99">
+              <MaskedText
+                mask="999999.99"
+                style={{ color: colorAfterChanged("taxaLotacao") }}
+              >
                 {result?.taxaLotacao.toString()}
               </MaskedText>
             </View>
             <View style={styles.item}>
               <Text>ITU</Text>
-              <MaskedText mask="999999.99">{result?.itu.toString()}</MaskedText>
+              <MaskedText
+                mask="999999.99"
+                style={{ color: colorAfterChanged("itu") }}
+              >
+                {result?.itu.toString()}
+              </MaskedText>
             </View>
             <View style={styles.item}>
               <Text>DPL (L/vaca/dia)</Text>
-              <MaskedText mask="999999.99">{result?.dpl.toString()}</MaskedText>
+              <MaskedText
+                mask="999999.99"
+                style={{ color: colorAfterChanged("dpl") }}
+              >
+                {result?.dpl.toString()}
+              </MaskedText>
             </View>
             <View style={styles.item}>
               <Text>Pegada hídrica (L H2O/L leite)</Text>
-              <MaskedText mask="999999.99">
+              <MaskedText
+                mask="999999.99"
+                style={{ color: colorAfterChanged("pegadaHidrica") }}
+              >
                 {result?.pegadaHidrica.toString()}
               </MaskedText>
             </View>
@@ -151,66 +183,100 @@ export default function Result() {
 
             <View style={styles.item}>
               <Text>Produção diária (L/dia)</Text>
-              <MaskedText mask="999999.99">
+              <MaskedText
+                mask="999999.99"
+                style={{ color: colorAfterChanged("prodDiaria") }}
+              >
                 {result?.prodDiaria.toString()}
               </MaskedText>
             </View>
 
             <View style={styles.item}>
               <Text>Produção de leite (L/ha/dia)</Text>
-              <MaskedText mask="999999.99">
+              <MaskedText
+                mask="999999.99"
+                style={{ color: colorAfterChanged("prodLeiteDia") }}
+              >
                 {result?.prodLeiteDia.toString()}
               </MaskedText>
             </View>
 
             <View style={styles.item}>
               <Text>Produção de leite (L/ha/ano)</Text>
-              <MaskedText mask="999999.99">
+              <MaskedText
+                mask="999999.99"
+                style={{ color: colorAfterChanged("prodLeiteAno") }}
+              >
                 {result?.prodLeiteAno.toString()}
               </MaskedText>
             </View>
 
             <View style={styles.item}>
               <Text>Perda receita estresse (R$/ano)</Text>
-              <MaskedText mask="999999.99">
+              <MaskedText
+                mask="999999.99"
+                style={{ color: colorAfterChanged("perdaReceitaEstresse") }}
+              >
                 {result?.perdaReceitaEstresse.toString()}
               </MaskedText>
             </View>
 
             <View style={styles.item}>
               <Text>COE (R$/L)</Text>
-              <MaskedText mask="999999.99">{result?.coe.toString()}</MaskedText>
+              <MaskedText
+                mask="999999.99"
+                style={{ color: colorAfterChanged("coe") }}
+              >
+                {result?.coe.toString()}
+              </MaskedText>
             </View>
 
             <View style={styles.item}>
               <Text>COT (R$/L)</Text>
-              <MaskedText mask="999999.99">{result?.cot.toString()}</MaskedText>
+              <MaskedText
+                mask="999999.99"
+                style={{ color: colorAfterChanged("cot") }}
+              >
+                {result?.cot.toString()}
+              </MaskedText>
             </View>
 
             <View style={styles.item}>
               <Text>ML (R$/L)</Text>
-              <MaskedText mask="999999.99">
+              <MaskedText
+                mask="999999.99"
+                style={{ color: colorAfterChanged("mlArea") }}
+              >
                 {result?.mlArea.toString()}
               </MaskedText>
             </View>
 
             <View style={styles.item}>
               <Text>Receita por área (R$/ha/ano)</Text>
-              <MaskedText mask="999999.99">
+              <MaskedText
+                mask="999999.99"
+                style={{ color: colorAfterChanged("receitaTotalAno") }}
+              >
                 {result?.receitaTotalAno.toString()}
               </MaskedText>
             </View>
 
             <View style={styles.item}>
               <Text>TRCI (%a.a.)</Text>
-              <MaskedText mask="999999.99">
+              <MaskedText
+                mask="999999.99"
+                style={{ color: colorAfterChanged("trci") }}
+              >
                 {result?.trci.toString()}
               </MaskedText>
             </View>
 
             <View style={styles.item}>
               <Text>Payback (anos)</Text>
-              <MaskedText mask="999999.99">
+              <MaskedText
+                mask="999999.99"
+                style={{ color: colorAfterChanged("payback") }}
+              >
                 {result?.payback.toString()}
               </MaskedText>
             </View>
