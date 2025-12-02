@@ -5,8 +5,8 @@ import { colors } from "@/theme";
 import { MaskedText } from "react-native-mask-text";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Button } from "../components/Button";
-import { useFormStore } from "../state/form";
-import { useEffect, useState } from "react";
+import { Sliders, useFormStore } from "../state/form";
+import { useEffect, useMemo, useState } from "react";
 import { Header } from "../components/Hader";
 
 export interface TensionWater {
@@ -43,9 +43,35 @@ export default function Result() {
     history,
     sliderCoeValue,
     sliderDplValue,
+    sliderForValue,
+    sliderMsValue,
+    sliderPrecoValue,
   } = useFormStore();
   const result = resultSimulation();
   const router = useRouter();
+  const [lastSlidersState, setLastSlidersState] = useState<Sliders>({
+    sliderCoeValue,
+    sliderDplValue,
+    sliderForValue,
+    sliderMsValue,
+    sliderPrecoValue,
+  });
+
+  const hasChangedAnySlider = useMemo(() => {
+    return (
+      lastSlidersState.sliderCoeValue !== sliderCoeValue ||
+      lastSlidersState.sliderDplValue !== sliderDplValue ||
+      lastSlidersState.sliderForValue !== sliderForValue ||
+      lastSlidersState.sliderMsValue !== sliderMsValue ||
+      lastSlidersState.sliderPrecoValue !== sliderPrecoValue
+    );
+  }, [
+    sliderCoeValue,
+    sliderDplValue,
+    sliderForValue,
+    sliderMsValue,
+    sliderPrecoValue,
+  ]);
 
   const handleSave = () => {
     if (params.id && params.id !== "unsaved") updateSimulation(params.id);
@@ -65,7 +91,6 @@ export default function Result() {
   };
 
   useEffect(() => {
-    console.log("**** params.id", params.id);
     if (params.id) loadSimulation(params.id);
   }, []);
 
@@ -193,17 +218,18 @@ export default function Result() {
         </ScrollView>
 
         <View style={styles.footer}>
-          <Button
-            title="Abrir modal de simulação"
-            icon="dashboard"
-            type="secondary"
-            onPress={() => router.navigate("/modalSimulation")}
-          />
           {(!params.id ||
             params.id === "unsaved" ||
+            hasChangedAnySlider ||
             params.edited === "true") && (
             <Button title="Salvar" onPress={handleSave} />
           )}
+          <Button
+            title="Parâmetros da Simulação"
+            icon="keyboard-arrow-up"
+            type="secondary"
+            onPress={() => router.navigate("/modalSimulation")}
+          />
           <Button title="Editar" onPress={handleEdit} type="secondary" />
         </View>
       </View>

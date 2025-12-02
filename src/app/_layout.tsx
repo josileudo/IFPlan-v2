@@ -29,6 +29,8 @@ export default function Layout() {
         keyboardHandlingEnabled: true,
       }}
     >
+      <Stack.Screen name="dashboard" />
+      <Stack.Screen name="simulation/[id]" options={{}} />
       <Stack.Screen
         name="modalSimulation"
         options={{
