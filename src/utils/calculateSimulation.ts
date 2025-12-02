@@ -1,4 +1,4 @@
-import { ResultSimulation } from "@/app/state/form";
+import { ResultSimulation, Sliders } from "@/app/state/form";
 import { ClimateSoilSchema } from "@/app/components/Simulations/CimateSoil/schema";
 import { AnimalSchema } from "@/app/components/Simulations/Animal/schema";
 import { AreaSchema } from "@/app/components/Simulations/Area/schema";
@@ -7,7 +7,8 @@ import { EconomySchema } from "@/app/components/Simulations/Economy/schema";
 type SimulationInput = ClimateSoilSchema &
   AnimalSchema &
   AreaSchema &
-  EconomySchema;
+  EconomySchema &
+  Sliders;
 
 export const calculateSimulation = (
   data: SimulationInput
@@ -34,22 +35,20 @@ export const calculateSimulation = (
     depreciationRate: taxaDepreciacao,
     investmentsPerLiters: investimento,
     familyIncome: rendaFamiliar,
+    sliderCoeValue,
+    sliderDplValue,
+    sliderForValue,
+    sliderMsValue,
+    sliderPrecoValue,
   } = data;
 
   // Sliders (assuming 0 for now as they are not in the schema)
-  const slidersState = {
-    sliderCoeValue: 0,
-    sliderDplValue: 0,
-    sliderForValue: 0,
-    sliderMsValue: 0,
-    sliderPrecoValue: 0,
-  };
 
-  const varCoe = slidersState.sliderCoeValue / 100 + 1;
+  const varCoe = sliderCoeValue / 100 + 1;
   // const varDpl = slidersState.sliderDplValue / 100 + 1; // Unused in Kotlin code provided
-  const varFor = slidersState.sliderForValue / 100 + 1;
-  const varMs = slidersState.sliderMsValue / 100 + 1;
-  const varPreco = slidersState.sliderPrecoValue / 100 + 1;
+  const varFor = sliderForValue / 100 + 1;
+  const varMs = sliderMsValue / 100 + 1;
+  const varPreco = sliderPrecoValue / 100 + 1;
 
   // ETo (mm)
   const ETo =

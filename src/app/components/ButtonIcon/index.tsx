@@ -6,12 +6,14 @@ import { TouchableOpacity } from "react-native";
 type Props = {
   icon?: keyof typeof MaterialIcons.glyphMap & string;
   type?: "primary" | "secondary";
+  size?: number;
   onPress: () => void;
 };
 
 export const ButtonIcon = ({
   icon = "add",
   type = "primary",
+  size = 24,
   onPress,
 }: Props) => {
   const iconColor = type === "primary" ? colors.background : colors.primary;
@@ -24,7 +26,7 @@ export const ButtonIcon = ({
       onPress={onPress}
       activeOpacity={0.8}
     >
-      <MaterialIcons name={icon} size={24} color={iconColor} />
+      <MaterialIcons name={icon} size={size} color={iconColor} />
     </TouchableOpacity>
   );
 };

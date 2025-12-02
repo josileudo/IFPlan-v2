@@ -10,6 +10,11 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  content: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
   text: {
     fontFamily: fontFamily.medium,
     fontSize: 14,

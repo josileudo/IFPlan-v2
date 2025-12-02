@@ -13,9 +13,21 @@ export type Data =
   | ClimateSoilSchema
   | AnimalSchema
   | AreaSchema
-  | EconomySchema;
+  | EconomySchema
+  | Sliders;
 
-export type ResultSimulation = EconomySchema & SystemsEconomic & TensionWater;
+export type Sliders = {
+  sliderCoeValue: number;
+  sliderDplValue: number;
+  sliderForValue: number;
+  sliderMsValue: number;
+  sliderPrecoValue: number;
+};
+
+export type ResultSimulation = EconomySchema &
+  SystemsEconomic &
+  TensionWater &
+  Sliders;
 
 export interface SavedSimulation {
   id: string;
@@ -38,7 +50,18 @@ interface FormState {
   saveToStorage: () => void;
   loadFromStorage: () => void;
   resetForm: () => void;
-
+  // Sliders
+  sliderCoeValue: number;
+  setSliderCoeValue: (value: number) => void;
+  sliderDplValue: number;
+  setSliderDplValue: (value: number) => void;
+  sliderForValue: number;
+  setSliderForValue: (value: number) => void;
+  sliderMsValue: number;
+  setSliderMsValue: (value: number) => void;
+  sliderPrecoValue: number;
+  setSliderPrecoValue: (value: number) => void;
+  resetSliders: () => void;
   // History
   history: SavedSimulation[];
   saveSimulation: (name?: string) => void;
@@ -55,6 +78,11 @@ const initialState = {
   economy: {} as EconomySchema,
   currentStep: 1,
   history: [],
+  sliderCoeValue: 1,
+  sliderDplValue: 1,
+  sliderForValue: 1,
+  sliderMsValue: 1,
+  sliderPrecoValue: 1,
 };
 
 const storage = new MMKVLoader().initialize();
@@ -112,12 +140,20 @@ export const useFormStore = create<FormState>((set, get) => ({
     }
   },
   resultSimulation: () => {
-    const { economy, animal, area, climateSoil } = get();
+    const sliders = {
+      sliderCoeValue: get().sliderCoeValue,
+      sliderDplValue: get().sliderDplValue,
+      sliderForValue: get().sliderForValue,
+      sliderMsValue: get().sliderMsValue,
+      sliderPrecoValue: get().sliderPrecoValue,
+    };
+
     return calculateSimulation({
-      ...climateSoil,
-      ...animal,
-      ...area,
-      ...economy,
+      ...get().climateSoil,
+      ...get().animal,
+      ...get().area,
+      ...get().economy,
+      ...sliders,
     });
   },
   // History Actions
@@ -181,6 +217,35 @@ export const useFormStore = create<FormState>((set, get) => ({
       climateSoil: {} as ClimateSoilSchema,
       economy: {} as EconomySchema,
       currentStep: 1,
+      sliderCoeValue: 1,
+      sliderDplValue: 1,
+      sliderForValue: 1,
+      sliderMsValue: 1,
+      sliderPrecoValue: 1,
     });
+  },
+  resetSliders: () => {
+    set({
+      sliderCoeValue: 1,
+      sliderDplValue: 1,
+      sliderForValue: 1,
+      sliderMsValue: 1,
+      sliderPrecoValue: 1,
+    });
+  },
+  setSliderCoeValue: (value) => {
+    set({ sliderCoeValue: value });
+  },
+  setSliderDplValue: (value) => {
+    set({ sliderDplValue: value });
+  },
+  setSliderForValue: (value) => {
+    set({ sliderForValue: value });
+  },
+  setSliderMsValue: (value) => {
+    set({ sliderMsValue: value });
+  },
+  setSliderPrecoValue: (value) => {
+    set({ sliderPrecoValue: value });
   },
 }));

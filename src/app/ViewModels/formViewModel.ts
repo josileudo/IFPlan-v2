@@ -1,11 +1,7 @@
-import { useEffect } from "react";
 import { Data, useFormStore } from "../state/form";
-import { router } from "expo-router";
-import { Alert } from "react-native";
 export type SectionType = "animal" | "area" | "economy" | "climateSoil";
 
 export const useFormViewModel = (section?: SectionType) => {
-  const { navigate } = router;
   const {
     updateSection,
     currentStep,
@@ -20,6 +16,12 @@ export const useFormViewModel = (section?: SectionType) => {
     loadSimulation,
     resetForm,
     history,
+    sliderCoeValue,
+    sliderDplValue,
+    sliderForValue,
+    sliderMsValue,
+    sliderPrecoValue,
+    resultSimulation,
   } = useFormStore();
 
   const onSubmitForm = (data: Data) => {
@@ -40,8 +42,6 @@ export const useFormViewModel = (section?: SectionType) => {
   const handlePrev = () => {
     prevForm();
   };
-
-  useEffect(() => {}, [climateSoil]);
 
   return {
     onSubmitForm,

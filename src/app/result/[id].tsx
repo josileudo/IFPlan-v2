@@ -41,6 +41,8 @@ export default function Result() {
     updateSimulation,
     loadSimulation,
     history,
+    sliderCoeValue,
+    sliderDplValue,
   } = useFormStore();
   const result = resultSimulation();
   const router = useRouter();
@@ -61,8 +63,6 @@ export default function Result() {
       router.navigate(`/simulation/${params.id}`);
     }
   };
-
-  console.log(result);
 
   useEffect(() => {
     console.log("**** params.id", params.id);
@@ -193,6 +193,12 @@ export default function Result() {
         </ScrollView>
 
         <View style={styles.footer}>
+          <Button
+            title="Abrir modal de simulação"
+            icon="dashboard"
+            type="secondary"
+            onPress={() => router.navigate("/modalSimulation")}
+          />
           {(!params.id ||
             params.id === "unsaved" ||
             params.edited === "true") && (
