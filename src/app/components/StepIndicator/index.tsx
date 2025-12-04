@@ -77,8 +77,8 @@ export const StepIndicator = ({
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>{title}</Text>
         {renderStepIndicator()}
+        <Text style={styles.title}>{steps[step - 1].title}</Text>
       </View>
 
       <View style={styles.contentContainer}>{steps[step - 1].children}</View>

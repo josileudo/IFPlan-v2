@@ -38,6 +38,7 @@ export interface SavedSimulation {
 
 interface FormState {
   data: Data | null;
+  currentSimulation: SavedSimulation | null;
   nextForm: () => void;
   prevForm: () => void;
   updateSection: (section: SectionType, data: Data) => void;
@@ -72,6 +73,7 @@ interface FormState {
 
 const initialState = {
   data: null,
+  currentSimulation: null,
   climateSoil: {} as ClimateSoilSchema,
   animal: {} as AnimalSchema,
   area: {} as AreaSchema,
@@ -90,8 +92,6 @@ const storage = new MMKVLoader().initialize();
 export const useFormStore = create<FormState>((set, get) => ({
   ...initialState,
   updateSection: (section: SectionType, data: Data) => {
-    console.log("*** section", section);
-    console.log("*** data", data);
     set({ [section]: { ...get()[section], ...data } });
   },
   nextForm: () => {
@@ -202,6 +202,7 @@ export const useFormStore = create<FormState>((set, get) => ({
         area: { ...data } as unknown as AreaSchema,
         economy: { ...data } as unknown as EconomySchema,
         currentStep: 1,
+        currentSimulation: simulation,
       });
     }
   },
@@ -212,17 +213,13 @@ export const useFormStore = create<FormState>((set, get) => ({
     storage.setString("simulationHistory", JSON.stringify(newHistory));
   },
   resetForm: () => {
+    get().resetSliders();
     set({
       animal: {} as AnimalSchema,
       area: {} as AreaSchema,
       climateSoil: {} as ClimateSoilSchema,
       economy: {} as EconomySchema,
       currentStep: 1,
-      sliderCoeValue: 1,
-      sliderDplValue: 1,
-      sliderForValue: 1,
-      sliderMsValue: 1,
-      sliderPrecoValue: 1,
     });
   },
   resetSliders: () => {

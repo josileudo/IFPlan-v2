@@ -1,3 +1,5 @@
+import { Platform } from "react-native";
+
 export const formatNumber = (number: number | string, decimals = 2): string => {
   const numericRegex = /^\d+(\.\d+)?$/;
 
@@ -9,3 +11,5 @@ export const formatNumber = (number: number | string, decimals = 2): string => {
     return parseFloat(number).toFixed(decimals);
   }
 };
+
+export const verticalOffset = Platform.OS === "ios" ? 200 : 100;

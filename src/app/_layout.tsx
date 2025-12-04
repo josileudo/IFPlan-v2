@@ -30,7 +30,8 @@ export default function Layout() {
       }}
     >
       <Stack.Screen name="dashboard" />
-      <Stack.Screen name="simulation/[id]" options={{}} />
+      <Stack.Screen name="result/[id]" />
+      <Stack.Screen name="simulation/[id]" />
       <Stack.Screen
         name="modalSimulation"
         options={{

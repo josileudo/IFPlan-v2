@@ -14,25 +14,20 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { useFormViewModel } from "@/app/ViewModels/formViewModel";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { StepFooterButton } from "../../StepFooterButton";
+import { verticalOffset } from "@/utils/formatNumber";
 
 export const ClimateSoil = () => {
   const formRef = useRef<Array<TextInput | null>>([]);
   const { onSubmitForm, climateSoil } = useFormViewModel("climateSoil");
 
-  const { control, handleSubmit, reset } = useForm<ClimateSoilSchema>({
+  const { control, handleSubmit } = useForm<ClimateSoilSchema>({
     resolver: zodResolver(climateSoilSchema),
     defaultValues: climateSoil,
   });
-
-  const verticalOffset = Platform.OS === "ios" ? 150 : 100;
-
-  useEffect(() => {
-    reset(climateSoil);
-  }, [climateSoil]);
 
   return (
     <View style={styles.container}>

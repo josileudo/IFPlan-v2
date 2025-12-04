@@ -1,13 +1,16 @@
 import { ScrollView, StyleSheet, Text, View, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { colors } from "@/theme";
+import { colors, fontFamily } from "@/theme";
 import { MaskedText } from "react-native-mask-text";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Button } from "../components/Button";
 import { Sliders, useFormStore } from "../state/form";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Header } from "../components/Hader";
+import ViewShot from "react-native-view-shot";
+import * as Sharing from "expo-sharing";
+import * as FileSystem from "expo-file-system";
 
 export interface TensionWater {
   tenAguaSolo: number;
@@ -33,6 +36,7 @@ export interface SystemsEconomic {
 }
 
 export default function Result() {
+  const viewShotRef = useRef<ViewShot>(null);
   const params =
     useLocalSearchParams<{ id?: string; edited?: string }>() || null;
   const {
@@ -46,6 +50,7 @@ export default function Result() {
     sliderForValue,
     sliderMsValue,
     sliderPrecoValue,
+    currentSimulation,
   } = useFormStore();
   const result = resultSimulation();
   const router = useRouter();
@@ -95,7 +100,20 @@ export default function Result() {
     }
   };
 
+  const handleShare = async () => {
+    try {
+      const uri = await viewShotRef.current.capture();
+      const newPath = FileSystem.documentDirectory + `result-${params.id}.png`;
+      await FileSystem.copyAsync({ from: uri, to: newPath });
+      await Sharing.shareAsync(newPath);
+    } catch (error) {
+      console.log(error);
+      Alert.alert("Erro", "Não foi possível gerar a imagem.");
+    }
+  };
+
   useEffect(() => {
+    console.log(params);
     if (params.id) loadSimulation(params.id);
     setLastResult(resultSimulation());
   }, []);
@@ -105,182 +123,272 @@ export default function Result() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title="Resultados" onNavigate={() => router.back()} />
+      <Header
+        title={"Resultados"}
+        iconRight="share"
+        onActionLeft={() => router.navigate("/dashboard")}
+        onActionRight={() => handleShare()}
+      />
+
       <View style={styles.wrapper}>
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-          <View style={styles.card}>
-            <Text style={styles.title}>Solo-Água-Planta-Animal</Text>
-            <View style={styles.item}>
-              <Text>Tensão da água no solo (bar)</Text>
-              <MaskedText
-                mask="999999.99"
-                style={{
-                  color: colorAfterChanged("tenAguaSolo"),
-                }}
-              >
-                {result?.tenAguaSolo.toString()}
-              </MaskedText>
-            </View>
-            <View style={styles.item}>
-              <Text>Produção de forragem (kg MV/m2)</Text>
-              <MaskedText
-                mask="999999.99"
-                style={{
-                  color: colorAfterChanged("prodForragem"),
-                }}
-              >
-                {result?.prodForragem.toString()}
-              </MaskedText>
-            </View>
-            <View style={styles.item}>
-              <Text>Capacidade de suporte (animais)</Text>
-              <MaskedText mask="999999.99">
-                {result?.capaSuporte.toString()}
-              </MaskedText>
-            </View>
-            <View style={styles.item}>
-              <Text>Taxa de lotação (vacas/ha)</Text>
-              <MaskedText
-                mask="999999.99"
-                style={{ color: colorAfterChanged("taxaLotacao") }}
-              >
-                {result?.taxaLotacao.toString()}
-              </MaskedText>
-            </View>
-            <View style={styles.item}>
-              <Text>ITU</Text>
-              <MaskedText
-                mask="999999.99"
-                style={{ color: colorAfterChanged("itu") }}
-              >
-                {result?.itu.toString()}
-              </MaskedText>
-            </View>
-            <View style={styles.item}>
-              <Text>DPL (L/vaca/dia)</Text>
-              <MaskedText
-                mask="999999.99"
-                style={{ color: colorAfterChanged("dpl") }}
-              >
-                {result?.dpl.toString()}
-              </MaskedText>
-            </View>
-            <View style={styles.item}>
-              <Text>Pegada hídrica (L H2O/L leite)</Text>
-              <MaskedText
-                mask="999999.99"
-                style={{ color: colorAfterChanged("pegadaHidrica") }}
-              >
-                {result?.pegadaHidrica.toString()}
-              </MaskedText>
-            </View>
-          </View>
-
-          <View style={styles.card}>
-            <Text style={styles.title}>
-              Sistemas-Custos-Resultado-Econômico
+          <ViewShot
+            ref={viewShotRef}
+            captureMode="mount"
+            options={{
+              fileName: `result-${params.id}.png`,
+              format: "jpg",
+              quality: 1,
+            }}
+            style={{ flex: 1 }}
+          >
+            <Text
+              style={styles.titleSimulation}
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
+              {currentSimulation?.name}
             </Text>
-
-            <View style={styles.item}>
-              <Text>Produção diária (L/dia)</Text>
-              <MaskedText
-                mask="999999.99"
-                style={{ color: colorAfterChanged("prodDiaria") }}
-              >
-                {result?.prodDiaria.toString()}
-              </MaskedText>
+            <View style={styles.card}>
+              <Text style={styles.title}>Solo-Água-Planta-Animal</Text>
+              <View style={styles.item}>
+                <Text style={styles.itemText}>
+                  Tensão da água no solo (bar)
+                </Text>
+                <MaskedText
+                  mask="999999.99"
+                  style={{
+                    ...styles.resultText,
+                    color: colorAfterChanged("tenAguaSolo"),
+                  }}
+                >
+                  {result?.tenAguaSolo.toString()}
+                </MaskedText>
+              </View>
+              <View style={styles.item}>
+                <Text style={styles.itemText}>
+                  Produção de forragem (kg MV/m2)
+                </Text>
+                <MaskedText
+                  mask="999999.99"
+                  style={{
+                    ...styles.resultText,
+                    color: colorAfterChanged("prodForragem"),
+                  }}
+                >
+                  {result?.prodForragem.toString()}
+                </MaskedText>
+              </View>
+              <View style={styles.item}>
+                <Text style={styles.itemText}>
+                  Capacidade de suporte (animais)
+                </Text>
+                <MaskedText
+                  mask="999999.99"
+                  style={{
+                    ...styles.resultText,
+                    color: colorAfterChanged("capaSuporte"),
+                  }}
+                >
+                  {result?.capaSuporte.toString()}
+                </MaskedText>
+              </View>
+              <View style={styles.item}>
+                <Text style={styles.itemText}>Taxa de lotação (vacas/ha)</Text>
+                <MaskedText
+                  mask="999999.99"
+                  style={{
+                    ...styles.resultText,
+                    color: colorAfterChanged("taxaLotacao"),
+                  }}
+                >
+                  {result?.taxaLotacao.toString()}
+                </MaskedText>
+              </View>
+              <View style={styles.item}>
+                <Text style={styles.itemText}>ITU</Text>
+                <MaskedText
+                  mask="999999.99"
+                  style={{
+                    ...styles.resultText,
+                    color: colorAfterChanged("itu"),
+                  }}
+                >
+                  {result?.itu.toString()}
+                </MaskedText>
+              </View>
+              <View style={styles.item}>
+                <Text style={styles.itemText}>DPL (L/vaca/dia)</Text>
+                <MaskedText
+                  mask="999999.99"
+                  style={{
+                    ...styles.resultText,
+                    color: colorAfterChanged("dpl"),
+                  }}
+                >
+                  {result?.dpl.toString()}
+                </MaskedText>
+              </View>
+              <View style={styles.item}>
+                <Text style={styles.itemText}>
+                  Pegada hídrica (L H2O/L leite)
+                </Text>
+                <MaskedText
+                  mask="999999.99"
+                  style={{
+                    ...styles.resultText,
+                    color: colorAfterChanged("pegadaHidrica"),
+                  }}
+                >
+                  {result?.pegadaHidrica.toString()}
+                </MaskedText>
+              </View>
             </View>
 
-            <View style={styles.item}>
-              <Text>Produção de leite (L/ha/dia)</Text>
-              <MaskedText
-                mask="999999.99"
-                style={{ color: colorAfterChanged("prodLeiteDia") }}
-              >
-                {result?.prodLeiteDia.toString()}
-              </MaskedText>
-            </View>
+            <View style={styles.card}>
+              <Text style={styles.title}>
+                Sistemas-Custos-Resultado-Econômico
+              </Text>
 
-            <View style={styles.item}>
-              <Text>Produção de leite (L/ha/ano)</Text>
-              <MaskedText
-                mask="999999.99"
-                style={{ color: colorAfterChanged("prodLeiteAno") }}
-              >
-                {result?.prodLeiteAno.toString()}
-              </MaskedText>
-            </View>
+              <View style={styles.item}>
+                <Text style={styles.itemText}>Produção diária (L/dia)</Text>
+                <MaskedText
+                  mask="999999.99"
+                  style={{
+                    ...styles.resultText,
+                    color: colorAfterChanged("prodDiaria"),
+                  }}
+                >
+                  {result?.prodDiaria.toString()}
+                </MaskedText>
+              </View>
 
-            <View style={styles.item}>
-              <Text>Perda receita estresse (R$/ano)</Text>
-              <MaskedText
-                mask="999999.99"
-                style={{ color: colorAfterChanged("perdaReceitaEstresse") }}
-              >
-                {result?.perdaReceitaEstresse.toString()}
-              </MaskedText>
-            </View>
+              <View style={styles.item}>
+                <Text style={styles.itemText}>
+                  Produção de leite (L/ha/dia)
+                </Text>
+                <MaskedText
+                  mask="999999.99"
+                  style={{
+                    ...styles.resultText,
+                    color: colorAfterChanged("prodLeiteDia"),
+                  }}
+                >
+                  {result?.prodLeiteDia.toString()}
+                </MaskedText>
+              </View>
 
-            <View style={styles.item}>
-              <Text>COE (R$/L)</Text>
-              <MaskedText
-                mask="999999.99"
-                style={{ color: colorAfterChanged("coe") }}
-              >
-                {result?.coe.toString()}
-              </MaskedText>
-            </View>
+              <View style={styles.item}>
+                <Text style={styles.itemText}>
+                  Produção de leite (L/ha/ano)
+                </Text>
+                <MaskedText
+                  mask="999999.99"
+                  style={{
+                    ...styles.resultText,
+                    color: colorAfterChanged("prodLeiteAno"),
+                  }}
+                >
+                  {result?.prodLeiteAno.toString()}
+                </MaskedText>
+              </View>
 
-            <View style={styles.item}>
-              <Text>COT (R$/L)</Text>
-              <MaskedText
-                mask="999999.99"
-                style={{ color: colorAfterChanged("cot") }}
-              >
-                {result?.cot.toString()}
-              </MaskedText>
-            </View>
+              <View style={styles.item}>
+                <Text style={styles.itemText}>
+                  Perda receita estresse (R$/ano)
+                </Text>
+                <MaskedText
+                  mask="999999.99"
+                  style={{
+                    ...styles.resultText,
+                    color: colorAfterChanged("perdaReceitaEstresse"),
+                  }}
+                >
+                  {result?.perdaReceitaEstresse.toString()}
+                </MaskedText>
+              </View>
 
-            <View style={styles.item}>
-              <Text>ML (R$/L)</Text>
-              <MaskedText
-                mask="999999.99"
-                style={{ color: colorAfterChanged("mlArea") }}
-              >
-                {result?.mlArea.toString()}
-              </MaskedText>
-            </View>
+              <View style={styles.item}>
+                <Text style={styles.itemText}>COE (R$/L)</Text>
+                <MaskedText
+                  mask="999999.99"
+                  style={{
+                    ...styles.resultText,
+                    color: colorAfterChanged("coe"),
+                  }}
+                >
+                  {result?.coe.toString()}
+                </MaskedText>
+              </View>
 
-            <View style={styles.item}>
-              <Text>Receita por área (R$/ha/ano)</Text>
-              <MaskedText
-                mask="999999.99"
-                style={{ color: colorAfterChanged("receitaTotalAno") }}
-              >
-                {result?.receitaTotalAno.toString()}
-              </MaskedText>
-            </View>
+              <View style={styles.item}>
+                <Text style={styles.itemText}>COT (R$/L)</Text>
+                <MaskedText
+                  mask="999999.99"
+                  style={{
+                    ...styles.resultText,
+                    color: colorAfterChanged("cot"),
+                  }}
+                >
+                  {result?.cot.toString()}
+                </MaskedText>
+              </View>
 
-            <View style={styles.item}>
-              <Text>TRCI (%a.a.)</Text>
-              <MaskedText
-                mask="999999.99"
-                style={{ color: colorAfterChanged("trci") }}
-              >
-                {result?.trci.toString()}
-              </MaskedText>
-            </View>
+              <View style={styles.item}>
+                <Text style={styles.itemText}>ML (R$/L)</Text>
+                <MaskedText
+                  mask="999999.99"
+                  style={{
+                    ...styles.resultText,
+                    color: colorAfterChanged("mlArea"),
+                  }}
+                >
+                  {result?.mlArea.toString()}
+                </MaskedText>
+              </View>
 
-            <View style={styles.item}>
-              <Text>Payback (anos)</Text>
-              <MaskedText
-                mask="999999.99"
-                style={{ color: colorAfterChanged("payback") }}
-              >
-                {result?.payback.toString()}
-              </MaskedText>
+              <View style={styles.item}>
+                <Text style={styles.itemText}>
+                  Receita por área (R$/ha/ano)
+                </Text>
+                <MaskedText
+                  mask="999999.99"
+                  style={{
+                    ...styles.resultText,
+                    color: colorAfterChanged("receitaTotalAno"),
+                  }}
+                >
+                  {result?.receitaTotalAno.toString()}
+                </MaskedText>
+              </View>
+
+              <View style={styles.item}>
+                <Text style={styles.itemText}>TRCI (%a.a.)</Text>
+                <MaskedText
+                  mask="999999.99"
+                  style={{
+                    ...styles.resultText,
+                    color: colorAfterChanged("trci"),
+                  }}
+                >
+                  {result?.trci.toString()}
+                </MaskedText>
+              </View>
+
+              <View style={styles.item}>
+                <Text style={styles.itemText}>Payback (anos)</Text>
+                <MaskedText
+                  mask="999999.99"
+                  style={{
+                    ...styles.resultText,
+                    color: colorAfterChanged("payback"),
+                  }}
+                >
+                  {result?.payback.toString()}
+                </MaskedText>
+              </View>
             </View>
-          </View>
+          </ViewShot>
         </ScrollView>
 
         <View style={styles.footer}>
@@ -315,6 +423,11 @@ const styles = StyleSheet.create({
   content: {
     paddingVertical: 12,
   },
+  titleSimulation: {
+    fontSize: 18,
+    fontFamily: fontFamily.medium,
+    paddingVertical: 8,
+  },
   card: {
     padding: 12,
     backgroundColor: colors.card,
@@ -333,8 +446,17 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontWeight: "bold",
     color: colors.textPrimary,
+    fontFamily: fontFamily.bold,
+  },
+  resultText: {
+    fontSize: 12,
+    fontFamily: fontFamily.medium,
+  },
+  itemText: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    fontFamily: fontFamily.regular,
   },
   footer: {
     paddingVertical: 12,

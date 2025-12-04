@@ -16,6 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AnimalSchema, animalSchema, formFieldsAnimal } from "./schema";
 import { StepFooterButton } from "../../StepFooterButton";
 import { router, useLocalSearchParams } from "expo-router";
+import { verticalOffset } from "@/utils/formatNumber";
 
 export const Animal = () => {
   const formRef = useRef<Array<TextInput | null>>([]);
@@ -27,8 +28,6 @@ export const Animal = () => {
     resolver: zodResolver(animalSchema),
     defaultValues: animal,
   });
-
-  const verticalOffset = Platform.OS === "ios" ? 150 : 100;
 
   const handleFinish = async () => {
     try {
