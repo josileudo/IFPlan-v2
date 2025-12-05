@@ -1,0 +1,127 @@
+import { styles } from "./styles";
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+
+type Step = {
+  title: string;
+  children: React.ReactNode;
+};
+
+type Props = {
+  title?: string;
+  steps: Step[];
+  automaticNavigation?: boolean;
+  showButtons?: boolean;
+  currentStep?: number;
+  prevDisabled?: boolean;
+  nextDisabled?: boolean;
+  onNext?: () => void;
+  onPrev?: () => void;
+  onFinish?: () => void;
+};
+
+export const StepIndicator = ({
+  title,
+  steps,
+  onNext,
+  onPrev,
+  onFinish,
+  showButtons = false,
+  currentStep = 1,
+  prevDisabled = false,
+  nextDisabled = false,
+  automaticNavigation = false,
+}: Props) => {
+  const [step, setStep] = useState(currentStep);
+  const totalSteps = steps?.length ?? 0;
+
+  React.useEffect(() => {
+    setStep(currentStep);
+  }, [currentStep]);
+
+  const handleNext = () => {
+    if (automaticNavigation) {
+      setStep((prevStep) => Math.min(prevStep + 1, totalSteps));
+    } else {
+      onNext?.();
+    }
+  };
+
+  const handlePrevious = () => {
+    if (automaticNavigation) {
+      setStep((prevStep) => Math.max(prevStep - 1, 1));
+    } else {
+      onPrev?.();
+    }
+  };
+
+  const renderStepIndicator = () => {
+    const indicators = [];
+    for (let i = 1; i <= totalSteps; i++) {
+      indicators.push(
+        <View key={i} style={styles.stepContainer}>
+          <View style={[styles.stepIndicator, i <= step && styles.activeStep]}>
+            <Text style={[styles.stepText, i <= step && styles.activeStepText]}>
+              {i}
+            </Text>
+          </View>
+          {i < totalSteps && (
+            <View style={[styles.line, i < step && styles.activeLine]} />
+          )}
+        </View>
+      );
+    }
+    return <View style={styles.indicatorContainer}>{indicators}</View>;
+  };
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        {renderStepIndicator()}
+        <Text style={styles.title}>{steps[step - 1].title}</Text>
+      </View>
+
+      <View style={styles.contentContainer}>{steps[step - 1].children}</View>
+
+      {showButtons && (
+        <View style={styles.buttonContainer}>
+          {step > 1 && (
+            <TouchableOpacity
+              onPress={handlePrevious}
+              style={[
+                styles.button,
+                styles.backButton,
+                prevDisabled && styles.buttonDisabled,
+              ]}
+              disabled={prevDisabled}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.backButtonText}>Anterior</Text>
+            </TouchableOpacity>
+          )}
+          {step < totalSteps ? (
+            <TouchableOpacity
+              onPress={handleNext}
+              style={[
+                styles.button,
+                styles.nextButton,
+                nextDisabled && styles.buttonDisabled,
+              ]}
+              disabled={nextDisabled}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.nextButtonText}>Próximo</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              onPress={onFinish}
+              style={[styles.button, styles.nextButton]}
+            >
+              <Text style={styles.nextButtonText}>Salvar</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
+    </View>
+  );
+};

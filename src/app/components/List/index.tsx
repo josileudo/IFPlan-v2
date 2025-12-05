@@ -16,6 +16,7 @@ type Props<T> = FlatListProps<T> & {
   title: string;
   emptyMessage?: string;
   showButton?: boolean;
+  buttonPress?: () => void;
   containerStyle?: StyleProp<ViewStyle>;
 };
 
@@ -25,6 +26,7 @@ export const List: <T>(props: Props<T>) => JSX.Element = ({
   containerStyle,
   data,
   showButton = false,
+  buttonPress,
   renderItem,
   ...rest
 }) => {
@@ -32,7 +34,7 @@ export const List: <T>(props: Props<T>) => JSX.Element = ({
     <View style={[styles.container, containerStyle]}>
       <View style={styles.header}>
         <Text style={styles.title}>{title}</Text>
-        {showButton && <ButtonIcon icon="add" onPress={() => {}} />}
+        {showButton && <ButtonIcon icon="add" onPress={buttonPress} />}
       </View>
 
       <FlatList

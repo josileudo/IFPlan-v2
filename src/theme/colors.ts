@@ -12,6 +12,7 @@ export const colors = {
   error: "#D62828",
   transparency: "rgba(240,244,228,0.13)",
   card: "#F0F4E4",
+  disabled: "#a1a1aa",
   // },
 
   // dark: {

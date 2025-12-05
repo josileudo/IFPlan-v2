@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 8,
     backgroundColor: colors.card,
-    height: 120,
+    height: 100,
     borderWidth: 1,
     borderColor: colors.border,
     justifyContent: "space-between",

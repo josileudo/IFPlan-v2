@@ -1,34 +1,38 @@
-import { Card, SimulationDataProps } from "@/app/components/Card";
+import { Card } from "@/app/components/Card";
 import { List } from "@/app/components/List";
-import { SafeAreaView, Text, View } from "react-native";
-
-const data = [
-  {
-    id: "1",
-    title: "Simulação de Investimento A",
-    description: "Simulação fornecida por IFPlan",
-    createdAt: "2025-10-20T10:30:00.000Z",
-    updatedAt: "2025-10-25T14:45:00.000Z",
-    isFavorite: true,
-  },
-  {
-    id: "2",
-    title: "Simulação de Crédito B",
-    description: "Simulação fazenda teste 123",
-    createdAt: "2025-09-15T09:00:00.000Z",
-    updatedAt: "2025-10-18T16:20:00.000Z",
-    isFavorite: false,
-  },
-] as SimulationDataProps[];
+import { router } from "expo-router";
+import { useEffect } from "react";
+import { SafeAreaView, View } from "react-native";
+import { useFormStore } from "./state/form";
 
 export default function Dashboard() {
+  const { navigate } = router;
+  const { loadFromStorage, history } = useFormStore();
+
+  useEffect(() => {
+    loadFromStorage();
+  }, []);
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={{ flex: 1, paddingHorizontal: 12 }}>
         <List
-          data={data}
-          renderItem={({ item }) => <Card data={item} />}
+          data={history}
+          renderItem={({ item }) => (
+            <Card
+              data={{
+                id: item.id,
+                title: item.name,
+                description: item.description || "",
+                createdAt: item.date,
+                updatedAt: item.date,
+                isFavorite: false,
+              }}
+              onPress={() => navigate(`/result/${item.id}`)}
+            />
+          )}
           showButton
+          buttonPress={() => navigate(`/simulation/new`)}
           title={"Listagem de simulação"}
         />
       </View>

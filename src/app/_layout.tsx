@@ -7,8 +7,10 @@ import {
   Inter_400Regular,
 } from "@expo-google-fonts/inter";
 import { Stack } from "expo-router";
+import { MMKVLoader } from "react-native-mmkv-storage";
 
 export default function Layout() {
+  const storage = new MMKVLoader().initialize();
   const [fontsLoaded] = useFonts({
     Inter_700Bold,
     Inter_500Medium,
@@ -24,7 +26,24 @@ export default function Layout() {
       screenOptions={{
         headerShown: false,
         contentStyle: { backgroundColor: colors.background },
+        keyboardHandlingEnabled: true,
       }}
-    />
+    >
+      <Stack.Screen name="dashboard" />
+      <Stack.Screen name="result/[id]" />
+      <Stack.Screen name="simulation/[id]" />
+      <Stack.Screen
+        name="modalSimulation"
+        options={{
+          presentation: "formSheet",
+          title: "Parâmetros da Simulação",
+          gestureEnabled: false,
+          animation: "slide_from_bottom",
+          sheetAllowedDetents: [0.68],
+          freezeOnBlur: true,
+          sheetCornerRadius: 12,
+        }}
+      />
+    </Stack>
   );
 }

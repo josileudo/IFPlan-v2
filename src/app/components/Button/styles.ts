@@ -10,9 +10,25 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  content: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
   text: {
     fontFamily: fontFamily.medium,
     fontSize: 14,
     color: colors.background,
+  },
+  disabled: {
+    backgroundColor: colors.disabled,
+  },
+  secondary: {
+    backgroundColor: colors.background,
+    borderColor: colors.primary,
+    borderWidth: 1,
+  },
+  textSecondary: {
+    color: colors.textSecondary,
   },
 });

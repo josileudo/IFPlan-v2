@@ -19,4 +19,10 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
+  errorMessage: {
+    color: colors.error,
+    fontFamily: fontFamily.regular,
+    fontSize: 12,
+    marginTop: 4,
+  },
 });
