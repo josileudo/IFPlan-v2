@@ -3,6 +3,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { ImageBackground, StatusBar } from "react-native";
 import { router } from "expo-router";
 import { HomeScreen } from "./screens/Home";
+import { CustomModal } from "./components/CustomModal";
 
 export default function Index() {
   const image = require("../assets/background.png");

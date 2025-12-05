@@ -23,7 +23,7 @@ export default function Dashboard() {
               data={{
                 id: item.id,
                 title: item.name,
-                description: "Simulação fazenda teste 123",
+                description: item.description || "",
                 createdAt: item.date,
                 updatedAt: item.date,
                 isFavorite: false,

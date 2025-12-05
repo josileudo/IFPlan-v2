@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, View, Alert } from "react-native";
+import { ScrollView, StyleSheet, Text, View, Alert, Modal } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { colors, fontFamily } from "@/theme";
@@ -11,6 +11,8 @@ import { Header } from "../components/Hader";
 import ViewShot from "react-native-view-shot";
 import * as Sharing from "expo-sharing";
 import * as FileSystem from "expo-file-system";
+import { CustomModal } from "../components/CustomModal";
+import { Input } from "../components/Input";
 
 export interface TensionWater {
   tenAguaSolo: number;
@@ -54,6 +56,13 @@ export default function Result() {
   } = useFormStore();
   const result = resultSimulation();
   const router = useRouter();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [simulationName, setSimulationName] = useState(
+    currentSimulation?.name || ""
+  );
+  const [simulationDescription, setSimulationDescription] = useState(
+    currentSimulation?.description || ""
+  );
   const [lastSlidersState, setLastSlidersState] = useState<Sliders>({
     sliderCoeValue,
     sliderDplValue,
@@ -84,9 +93,25 @@ export default function Result() {
   };
 
   const handleSave = () => {
-    if (params.id && params.id !== "unsaved") updateSimulation(params.id);
-    else saveSimulation();
+    setModalVisible(true);
+  };
 
+  const handleConfirmSave = () => {
+    if (!simulationName.trim()) {
+      Alert.alert("Atenção", "Por favor, insira um nome para a simulação.");
+      return;
+    }
+
+    if (params.id && params.id !== "unsaved") {
+      updateSimulation(params.id, {
+        name: simulationName,
+        description: simulationDescription,
+      });
+    } else {
+      saveSimulation(simulationName, simulationDescription);
+    }
+
+    setModalVisible(false);
     router.replace("/dashboard");
     Alert.alert("Sucesso", "Simulação salva com sucesso!");
   };
@@ -118,11 +143,41 @@ export default function Result() {
     setLastResult(resultSimulation());
   }, []);
 
+  useEffect(() => {
+    if (currentSimulation) {
+      setSimulationName(currentSimulation.name || "");
+      setSimulationDescription(currentSimulation.description || "");
+    }
+  }, [currentSimulation]);
+
   // TODO: Criar um Array de objetos para renderizar os resultados
   // TODO: Trocar o scrollview por uma FlatList
 
   return (
     <SafeAreaView style={styles.container}>
+      <CustomModal visible={modalVisible}>
+        <View style={{ width: "100%", gap: 20 }}>
+          <Input
+            value={simulationName}
+            onChangeText={setSimulationName}
+            label="Nome da simulação"
+            placeholder="Digite o nome da simulação"
+          />
+          <Input
+            value={simulationDescription}
+            onChangeText={setSimulationDescription}
+            label="Descrição"
+            placeholder="Digite uma descrição (opcional)"
+          />
+          <Button title="Salvar" onPress={handleConfirmSave} />
+          <Button
+            title="Cancelar"
+            onPress={() => setModalVisible(false)}
+            type="secondary"
+          />
+        </View>
+      </CustomModal>
+
       <Header
         title={"Resultados"}
         iconRight="share"
@@ -462,5 +517,25 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     gap: 8,
     backgroundColor: colors.background,
+  },
+  modal: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalContent: {
+    padding: 12,
+    backgroundColor: colors.background,
+    borderRadius: 8,
   },
 });

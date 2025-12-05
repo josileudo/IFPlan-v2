@@ -5,8 +5,8 @@ import { forwardRef } from "react";
 import { MaskedTextInput } from "react-native-mask-text";
 
 type Props = TextInputProps & {
-  label: string;
-  mask: string;
+  label?: string;
+  mask?: string;
   errorMessage?: string;
 };
 
@@ -14,7 +14,7 @@ export const Input = forwardRef(
   ({ label, errorMessage, mask, onChangeText, ...rest }: Props, ref) => {
     return (
       <View style={styles.container}>
-        <Text style={styles.label}>{label}</Text>
+        {label && <Text style={styles.label}>{label}</Text>}
         {mask ? (
           <MaskedTextInput
             ref={ref}

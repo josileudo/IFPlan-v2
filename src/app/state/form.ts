@@ -33,6 +33,7 @@ export interface SavedSimulation {
   id: string;
   date: string;
   name: string;
+  description?: string;
   data: ResultSimulation;
 }
 
@@ -65,8 +66,11 @@ interface FormState {
   resetSliders: () => void;
   // History
   history: SavedSimulation[];
-  saveSimulation: (name?: string) => void;
-  updateSimulation: (id: string) => void;
+  saveSimulation: (name?: string, description?: string) => void;
+  updateSimulation: (
+    id: string,
+    updates?: { name?: string; description?: string }
+  ) => void;
   loadSimulation: (id: string) => void;
   deleteSimulation: (id: string) => void;
 }
@@ -157,31 +161,38 @@ export const useFormStore = create<FormState>((set, get) => ({
     });
   },
   // History Actions
-  saveSimulation: (name) => {
+  saveSimulation: (name, description) => {
     const state = get();
     const result = state.resultSimulation();
     const newSimulation: SavedSimulation = {
       id: Date.now().toString(),
       date: new Date().toISOString(),
       name: name || `Simulação ${new Date().toLocaleDateString()}`,
+      description: description || "",
       data: result,
     };
 
     const newHistory = [newSimulation, ...state.history];
-    set({ history: newHistory });
+    set({ history: newHistory, currentSimulation: newSimulation });
     storage.setString("simulationHistory", JSON.stringify(newHistory));
     console.log("Simulation saved to history");
   },
-  updateSimulation: (id) => {
+  updateSimulation: (id, updates) => {
     const state = get();
     const result = state.resultSimulation();
     const newHistory = state.history.map((sim) => {
       if (sim.id === id) {
-        return {
+        const updatedSim = {
           ...sim,
           date: new Date().toISOString(),
           data: result,
+          ...(updates?.name && { name: updates.name }),
+          ...(updates?.description !== undefined && {
+            description: updates.description,
+          }),
         };
+        set({ currentSimulation: updatedSim });
+        return updatedSim;
       }
       return sim;
     });
