@@ -14,33 +14,40 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 type Props = ModalProps & {
   children?: React.ReactNode;
+  title?: string;
+  onClose?: () => void;
 };
 
-export const CustomModal = ({ children, visible }: Props) => {
+export const CustomModal = ({
+  children,
+  visible,
+  title = "Modal",
+  onClose,
+}: Props) => {
   const [modalVisible, setModalVisible] = useState(visible);
 
   useEffect(() => {
     setModalVisible(visible);
   }, [visible]);
 
+  const closeModal = () => {
+    onClose?.();
+  };
+
   return (
     <Modal
-      animationType="slide"
+      animationType={modalVisible ? "fade" : "slide"}
       transparent={true}
       visible={modalVisible}
-      onRequestClose={() => {
-        Alert.alert("Modal has been closed.");
-        setModalVisible(!modalVisible);
-      }}
     >
       <View style={styles.overlay}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <View style={styles.header}>
-              <Text style={styles.headerText}>Salvar simulação</Text>
+              <Text style={styles.headerText}>{title}</Text>
               <Pressable
                 style={[styles.button, styles.buttonClose]}
-                onPress={() => setModalVisible(!modalVisible)}
+                onPress={closeModal}
               >
                 <MaterialIcons
                   name="close"
@@ -65,7 +72,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
   },
   header: {
     flexDirection: "row",

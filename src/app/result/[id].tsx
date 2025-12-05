@@ -155,7 +155,13 @@ export default function Result() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <CustomModal visible={modalVisible}>
+      <CustomModal
+        visible={modalVisible}
+        title={
+          currentSimulation?.name ? "Atualizar simulação" : "Salvar simulação"
+        }
+        onClose={() => setModalVisible(false)}
+      >
         <View style={{ width: "100%", gap: 20 }}>
           <Input
             value={simulationName}
@@ -169,12 +175,17 @@ export default function Result() {
             label="Descrição"
             placeholder="Digite uma descrição (opcional)"
           />
-          <Button title="Salvar" onPress={handleConfirmSave} />
-          <Button
-            title="Cancelar"
-            onPress={() => setModalVisible(false)}
-            type="secondary"
-          />
+          <View style={{ gap: 8, width: "100%" }}>
+            <Button
+              title={currentSimulation?.name ? "Atualizar" : "Salvar"}
+              onPress={handleConfirmSave}
+            />
+            <Button
+              title="Cancelar"
+              onPress={() => setModalVisible(false)}
+              type="secondary"
+            />
+          </View>
         </View>
       </CustomModal>
 
@@ -451,7 +462,10 @@ export default function Result() {
             params.id === "unsaved" ||
             hasChangedAnySlider ||
             params.edited === "true") && (
-            <Button title="Salvar" onPress={handleSave} />
+            <Button
+              title={params.id === "unsaved" ? "Salvar" : "Atualizar"}
+              onPress={handleSave}
+            />
           )}
           <Button
             title="Parâmetros da Simulação"
